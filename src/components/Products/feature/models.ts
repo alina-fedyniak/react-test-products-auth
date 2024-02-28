@@ -9,6 +9,7 @@ export interface ProductsState {
     total: number;
     to: number;
     per_page: number;
+    last_page: number;
   };
 }
 
@@ -17,7 +18,8 @@ export const initialState: ProductsState = {
   productsById: null,
   pagination: {
     total: 0,
-    to: 6,
-    per_page: 0
+    to: 0,
+    per_page: 6,
+    last_page: 1
   }
 };

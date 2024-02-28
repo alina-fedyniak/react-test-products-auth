@@ -39,6 +39,7 @@ export interface IGetProductsResponse {
   total: number;
   to: number;
   per_page: number;
+  last_page: number;
 }
 
 export interface IGetIProductByIdResponse {

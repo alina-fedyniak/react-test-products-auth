@@ -1,5 +1,5 @@
 export enum PaginationFields {
-  PAGE = 'to',
+  PAGE = 'page',
   TO = 'to',
 }
 
