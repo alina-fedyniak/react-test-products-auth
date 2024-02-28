@@ -9,6 +9,7 @@ import {
 
 const defaultConfigs: AxiosRequestConfig = {
   baseURL: API_URL,
+  headers: {'Authorization': 'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9kdW1teS1hcGkuZDAuYWNvbS5jbG91ZFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTcwOTEyMzEzOSwiZXhwIjoxNzA5MTI2NzM5LCJuYmYiOjE3MDkxMjMxMzksImp0aSI6IjByaTBvcmVFUmtSUWRlMVUiLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.zGgLUZqpCGyEEgLd3wK3o3huJgKEmsXUOYfqE1fW0Ew'}
 };
 
 class HttpClient<TClient extends AxiosInstance> {

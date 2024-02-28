@@ -1,11 +1,26 @@
 import React from 'react';
+import {
+    StyledWrap,
+    StyledImg,
+    StyledTitle,
+    StyledPrice
+} from './ProductStyled';
 
-const Product = () => {
+export interface IProduct {
+    id?: number;
+    title?: string;
+    price?: string;
+    thumbnail?: string;
+}
+
+const Product = ({id, title, price, thumbnail}: IProduct) => {
 
     return (
-        <>
-            <div>Product</div>
-        </>
+        <StyledWrap>
+            <StyledImg>Product{thumbnail}</StyledImg>
+            <StyledTitle>{title}</StyledTitle>
+            <StyledPrice>{price}</StyledPrice>
+        </StyledWrap>
     );
 }
 
