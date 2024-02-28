@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
     StyledWrap,
     StyledImg,
@@ -7,19 +8,25 @@ import {
 } from './ProductStyled';
 
 export interface IProduct {
-    id?: number;
-    title?: string;
-    price?: string;
-    thumbnail?: string;
+    id: number;
+    title: string;
+    price: string;
+    thumbnail: string;
 }
 
 const Product = ({id, title, price, thumbnail}: IProduct) => {
 
     return (
         <StyledWrap>
-            <StyledImg>Product{thumbnail}</StyledImg>
-            <StyledTitle>{title}</StyledTitle>
-            <StyledPrice>{price}</StyledPrice>
+            <Link to={`/products/${id}`}>
+                <StyledImg>
+                    <img src={thumbnail} alt="Thumbnail"/>
+                </StyledImg>
+            </Link>
+            <Link to={`/products/${id}`}>
+                <StyledTitle>{title}</StyledTitle>
+            </Link>
+            <StyledPrice>{price} $</StyledPrice>
         </StyledWrap>
     );
 }

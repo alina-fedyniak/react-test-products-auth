@@ -5,14 +5,14 @@ import {
 } from './ProductsContainerStyled';
 import {useAppDispatch, useAppState} from '../../../store/hooks';
 import {selectProducts, selectProductsPagination} from '../feature/selectors';
-import {getProducts} from "../feature/actionCreators";
+import {getProducts} from '../feature/actionCreators';
+import Product from '../Product/Product';
+import FilterForm from '../../FilterForm/FilterForm';
 
 const ProductsContainer = () => {
     const dispatch = useAppDispatch();
     const products = useAppState(selectProducts);
     const pagination = useAppState(selectProductsPagination);
-
-    console.log(products)
 
     useEffect(() => {
         dispatch(getProducts({per_page: 6}));
@@ -20,8 +20,21 @@ const ProductsContainer = () => {
 
     return (
         <StyledWrap>
+            <FilterForm/>
             <StyledBodyContainer>
-              <div>ProductsContainer</div>
+                {products && (
+                    products?.map(item => {
+                        return (
+                            <Product
+                                id={item.id}
+                                key={item.id}
+                                title={item.title}
+                                price={item.price}
+                                thumbnail={item.thumbnail}
+                            />
+                        )
+                    })
+                )}
             </StyledBodyContainer>
         </StyledWrap>
     );

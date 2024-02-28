@@ -18,12 +18,11 @@ export const productsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addMatcher(isFulfilled(getProducts), (state: ProductsState, action) => {
-
                 const {payload, meta} = action;
                 state.productsList =
                     state.productsList && meta.arg.to
-                        ? [...state.productsList, ...payload.products]
-                        : payload.products;
+                        ? [...state.productsList, ...payload.data]
+                        : payload.data;
 
                 state.pagination.to += state.pagination.per_page;
             })

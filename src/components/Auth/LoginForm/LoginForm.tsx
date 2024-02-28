@@ -1,8 +1,10 @@
-import React from 'react';
-import { Formik} from 'formik';
+import React, {useCallback} from 'react';
+import { Formik, FormikHelpers} from 'formik';
 import { StyledWrap } from './LoginFormStyled';
 import {selectIsAuthorised} from '../feature/selectors';
-import {useAppState} from '../../../store/hooks';
+import {useAppDispatch, useAppState} from '../../../store/hooks';
+import {logIn} from '../feature/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 export interface IValues {
     email: string;
@@ -28,61 +30,60 @@ const validate = (values: any) => {
 };
 
 const LoginForm = () => {
-    const isLogin = useAppState(selectIsAuthorised);
-    // console.log(isLogin)
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const onSubmit=(values: Record<string, any>, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
-        setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-        }, 400);
-    };
+    const onSubmit = useCallback(
+        (data: IValues, actions: FormikHelpers<any>) => {
+            localStorage.setItem('isAuthorised', 'true');
+            dispatch(logIn({status: true}));
+            actions.resetForm({values: initialValues});
+            navigate('/products');
+        }, [dispatch, navigate]);
 
     return (
-        <>
-            <StyledWrap>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={onSubmit}
-                    validate={validate}
-                    validateOnChange={false}
-                    validateOnBlur={false}
-                >
-                    {({
-                          values,
-                          errors,
-                          touched,
-                          handleChange,
-                          handleBlur,
-                          handleSubmit,
-                          isSubmitting,
-                      }) => (
-                        <form onSubmit={handleSubmit}>
-                            <div>Authorization</div>
-                            <input
-                                type="email"
-                                name="email"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.email}
-                            />
-                            {errors.email && touched.email && errors.email}
-                            <input
-                                type="password"
-                                name="password"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.password}
-                            />
-                            {errors.password && touched.password && errors.password}
-                            <button type="submit" disabled={isSubmitting}>
-                                Submit
-                            </button>
-                        </form>
-                    )}
-                </Formik>
-            </StyledWrap>
-        </>
+        <StyledWrap>
+            <Formik
+                initialValues={initialValues}
+                onSubmit={onSubmit}
+                validate={validate}
+                validateOnChange={false}
+                validateOnBlur={false}
+            >
+                {({
+                      values,
+                      errors,
+                      touched,
+                      handleChange,
+                      handleBlur,
+                      handleSubmit,
+                      isSubmitting,
+                  }) => (
+                    <form onSubmit={handleSubmit}>
+                        <div>Authorization</div>
+                        <input
+                            type="email"
+                            name="email"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.email}
+                        />
+                        {errors.email && touched.email && errors.email}
+                        <input
+                            type="password"
+                            name="password"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.password}
+                        />
+                        {errors.password && touched.password && errors.password}
+                        <button type="submit" disabled={isSubmitting}>
+                            Submit
+                        </button>
+                    </form>
+                )}
+            </Formik>
+        </StyledWrap>
     );
 }
 

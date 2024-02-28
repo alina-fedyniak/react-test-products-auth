@@ -35,12 +35,12 @@ export interface IGetProductByIdDTO{
 }
 
 export interface IGetProductsResponse {
-  products: IProducts[];
+  data: IProducts[];
   total: number;
   to: number;
   per_page: number;
 }
 
 export interface IGetIProductByIdResponse {
-  product: IProducts;
+  data: IProducts;
 }

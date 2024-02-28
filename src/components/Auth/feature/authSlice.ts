@@ -2,19 +2,17 @@ import {
   createSlice,
   PayloadAction
 } from '@reduxjs/toolkit';
-import {AUTH_SLICE_NAME, AuthData, AuthState, initialState} from './models';
+import {AUTH_SLICE_NAME, AuthState, initialState} from './models';
 
 export const authSlice = createSlice({
   name: AUTH_SLICE_NAME,
   initialState,
   reducers: {
-    logIn: (state: AuthState, action: PayloadAction<AuthData>) => {
-      state.isAuthorised = true;
-      state.authData = action.payload;
+    logIn: (state: AuthState, action: PayloadAction<{status: boolean}>) => {
+      state.isAuthorised = action.payload.status;
     },
-    logOut: (state) => {
-      state.isAuthorised = false;
-      state.authData = null;
+    logOut: () => {
+      localStorage.removeItem('isAuthorised');
     }
   }
 });

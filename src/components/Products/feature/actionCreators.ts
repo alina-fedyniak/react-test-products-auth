@@ -13,7 +13,7 @@ export const getProducts = createAsyncThunk<IGetProductsResponse,
     `${PRODUCTS_SLICE_NAME}/getProducts`,
     async (data: IGetProductsDTO) => {
         const response = await ProductAPI.getProducts(data);
-        console.log(data)
+
         return response.data;
     }
 );
