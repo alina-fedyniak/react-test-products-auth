@@ -1,10 +1,12 @@
 import React, {useCallback} from 'react';
 import { Formik, FormikHelpers} from 'formik';
 import { StyledWrap } from './LoginFormStyled';
-import {selectIsAuthorised} from '../feature/selectors';
-import {useAppDispatch, useAppState} from '../../../store/hooks';
+import {useAppDispatch} from '../../../store/hooks';
 import {logIn} from '../feature/authSlice';
 import { useNavigate } from 'react-router-dom';
+import {loginUser} from "../feature/actionCreators";
+import {appCookiesStorage} from "../../../utils";
+import {AUTHORIZATION_ACCESS_TOKEN} from "../../../constants/common";
 
 export interface IValues {
     email: string;
@@ -34,9 +36,9 @@ const LoginForm = () => {
     const dispatch = useAppDispatch();
 
     const onSubmit = useCallback(
-        (data: IValues, actions: FormikHelpers<any>) => {
-            localStorage.setItem('isAuthorised', 'true');
-            dispatch(logIn({status: true}));
+        async (data: IValues, actions: FormikHelpers<any>) => {
+            const response = await dispatch(loginUser(data)).unwrap();
+            appCookiesStorage.setItem(AUTHORIZATION_ACCESS_TOKEN, response.access_token)
             actions.resetForm({values: initialValues});
             navigate('/products');
         }, [dispatch, navigate]);

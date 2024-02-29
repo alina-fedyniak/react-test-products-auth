@@ -1,3 +1,6 @@
+import {appCookiesStorage} from "../../../utils";
+import {AUTHORIZATION_ACCESS_TOKEN} from "../../../constants/common";
+
 export const AUTH_SLICE_NAME = 'auth';
 
 export interface User {
@@ -22,6 +25,6 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  isAuthorised: false,
+  isAuthorised: !!appCookiesStorage.getItem(AUTHORIZATION_ACCESS_TOKEN),
   authData: null,
 };
