@@ -3,7 +3,7 @@ import {
   isFulfilled,
   isPending,
   isRejected,
-  createAction,
+    PayloadAction,
 } from '@reduxjs/toolkit';
 import { initialState, PRODUCTS_SLICE_NAME, ProductsState } from './models';
 import {
@@ -14,10 +14,22 @@ import {
 export const productsSlice = createSlice({
   name: PRODUCTS_SLICE_NAME,
   initialState,
-  reducers: {},
+  reducers: {
+      filterPosts: (state, action: PayloadAction<string>) => {
+          let filterResult = [] as any;
+          state.productsList?.forEach((item) => {
+              if (item.title.toLowerCase().indexOf(action.payload.toLowerCase()) !== -1) {
+                  filterResult.push(item);
+                  return;
+              }
+          });
+
+          state.productsList = filterResult;
+      }
+  },
     extraReducers: (builder) => {
         builder
-            .addMatcher(isFulfilled(getProducts), (state: ProductsState, action) => {
+            .addMatcher(isFulfilled(getProducts), (state: ProductsState, action: any) => {
                 const {payload} = action;
                 state.productsList =
                      state.productsList
@@ -48,4 +60,5 @@ export const productsSlice = createSlice({
     },
 });
 
+export const {filterPosts} = productsSlice.actions;
 export default productsSlice.reducer;
