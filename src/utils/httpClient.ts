@@ -4,13 +4,14 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import {
-  API_URL,
+    API_URL, AUTHORIZATION_ACCESS_TOKEN,
 } from '../constants/common';
+import {appCookiesStorage} from "./index";
 
 const defaultConfigs: AxiosRequestConfig = {
   baseURL: API_URL,
   headers: {
-      'Authorization': 'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9kdW1teS1hcGkuZDAuYWNvbS5jbG91ZFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTcwOTE0NTg1OSwiZXhwIjoxNzA5MTQ5NDU5LCJuYmYiOjE3MDkxNDU4NTksImp0aSI6ImR3bmpsWUZINktERXJzU3QiLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.ds7Y1VAvCvz7ym8oe8IjaOfrQo1xHlEjOMefy3F16Qk'
+      'Authorization': `bearer ${appCookiesStorage.getItem(AUTHORIZATION_ACCESS_TOKEN)}`
   }
 };
 
@@ -36,56 +37,38 @@ class HttpClient<TClient extends AxiosInstance> {
 
 const defaultClient = axios.create(defaultConfigs);
 
-let isRefreshing = false;
-let refreshSubscribers: Function[] = [];
+defaultClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
 
-defaultClient.interceptors.request.use(
-    (config) => {
-      if (isRefreshing) {
-        return new Promise((resolve) => {
-          refreshSubscribers.push(() => {
-            config.headers.Authorization = `bearer ${getNewToken()}`;
-            resolve(config);
-          });
-        });
-      }
+            try {
+                const accessToken = appCookiesStorage.getItem(AUTHORIZATION_ACCESS_TOKEN);
+                if (!accessToken) return;
+                const response = await axios.post('/api/auth/refresh', undefined, {headers:  {'Authorization': 'bearer ' + accessToken}});
+                const { access_token } = response.data;
 
-      if (shouldRefreshToken()) {
-        isRefreshing = true;
-        return refreshToken().then((newToken) => {
-          isRefreshing = false;
-          onRefreshed(newToken);
-          return config;
-        });
-      }
+                appCookiesStorage.setItem(AUTHORIZATION_ACCESS_TOKEN, access_token);
 
-      return config;
-    },
-    (error) => Promise.reject(error)
+                originalRequest.headers.Authorization = `Bearer ${access_token}`;
+                return axios(originalRequest);
+            } catch (error) {
+            }
+        }
+
+        return Promise.reject(error);
+    }
 );
 
-const getNewToken = (): string => 'new_token';
+defaultClient.interceptors.request.use(
+    (request) => {
+        request.headers.Authorization = `Bearer ${appCookiesStorage.getItem(AUTHORIZATION_ACCESS_TOKEN)}` ;
+        return request;
+},
 
-const shouldRefreshToken = (): boolean => true;
-
-const refreshToken = (): Promise<string> => Promise.resolve('new_token');
-
-// const refreshToken = (): Promise<string> => {
-//     return axios.post(API_URL+'api/auth/refresh')
-//         .then(response => {
-//             const newToken = response.data.access_token;
-//             return newToken;
-//         })
-//         .catch(error => {
-//             console.error('Failed to refresh token:', error);
-//             throw error;
-//         });
-// };
-
-const onRefreshed = (newToken: string) => {
-  refreshSubscribers.forEach((callback) => callback());
-  refreshSubscribers = [];
-};
+);
 
 export default new HttpClient(defaultClient);
 
