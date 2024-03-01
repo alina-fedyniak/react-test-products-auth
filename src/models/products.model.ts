@@ -13,6 +13,7 @@ export enum ProductsEndpoints {
 
 export const staticProductsEndpoints = {
   GET_PRODUCTS: `${ProductsEndpoints.ROOT}`,
+  FILTER_PRODUCTS: `${ProductsEndpoints.ROOT}`,
 };
 
 export interface IProducts {

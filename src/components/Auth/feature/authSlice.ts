@@ -1,6 +1,5 @@
 import {
   createSlice,
-  PayloadAction,
   isFulfilled
 } from '@reduxjs/toolkit';
 import {AUTH_SLICE_NAME, AuthState, initialState} from './models';
@@ -11,14 +10,7 @@ import { appCookiesStorage } from '../../../utils';
 export const authSlice = createSlice({
   name: AUTH_SLICE_NAME,
   initialState,
-  reducers: {
-    logIn: (state: AuthState, action: PayloadAction<{status: boolean}>) => {
-      state.isAuthorised = action.payload.status;
-    },
-    logOut: () => {
-      localStorage.removeItem('isAuthorised');
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
         .addMatcher(
@@ -42,5 +34,4 @@ export const authSlice = createSlice({
   }
 });
 
-export  const {logIn, logOut} = authSlice.actions;
 export default authSlice.reducer;

@@ -8,25 +8,13 @@ import {
 import { initialState, PRODUCTS_SLICE_NAME, ProductsState } from './models';
 import {
     getProducts,
-    getProductById,
+    getProductById, filterProducts,
 } from './actionCreators';
 
 export const productsSlice = createSlice({
   name: PRODUCTS_SLICE_NAME,
   initialState,
-  reducers: {
-      filterPosts: (state, action: PayloadAction<string>) => {
-          let filterResult = [] as any;
-          state.productsList?.forEach((item) => {
-              if (item.title.toLowerCase().indexOf(action.payload.toLowerCase()) !== -1) {
-                  filterResult.push(item);
-                  return;
-              }
-          });
-
-          state.productsList = filterResult;
-      }
-  },
+  reducers: {},
     extraReducers: (builder) => {
         builder
             .addMatcher(isFulfilled(getProducts), (state: ProductsState, action: any) => {
@@ -38,6 +26,13 @@ export const productsSlice = createSlice({
                 state.pagination.to += state.pagination.per_page;
                 state.pagination.last_page = payload.last_page;
             })
+            .addMatcher(
+                isFulfilled(filterProducts),
+                (state: ProductsState, action: PayloadAction<any>) => {
+                    const { payload } = action;
+                    state.productsList = payload.data;
+                }
+            )
             .addMatcher(isFulfilled(getProductById), (state: ProductsState, action) => {
                 const {payload} = action;
                 // @ts-ignore
@@ -60,5 +55,4 @@ export const productsSlice = createSlice({
     },
 });
 
-export const {filterPosts} = productsSlice.actions;
 export default productsSlice.reducer;

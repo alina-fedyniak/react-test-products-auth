@@ -27,3 +27,12 @@ export const getProductById = createAsyncThunk<IGetIProductByIdResponse,
         return response.data;
     },
 );
+
+export const filterProducts = createAsyncThunk<IGetProductsResponse, Record<any, any>>(
+    `${PRODUCTS_SLICE_NAME}/filterProducts`,
+    async (filters: Record<any, any>) => {
+        const response = await ProductAPI.filterProducts(filters);
+
+        return response.data;
+    }
+);

@@ -24,5 +24,17 @@ class ProductAPI {
     return httpClient.get<IGetIProductByIdResponse>(GET_BY_ID, { params });
   }
 
+  static filterProducts(
+      filters: Record<any, any>,
+  ): ApiResponse<IGetProductsResponse> {
+    const { FILTER_PRODUCTS } = staticProductsEndpoints;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      params.append(key, value);
+    }
+
+    return httpClient.get<IGetProductsResponse>(FILTER_PRODUCTS, {params});
+  }
+
 }
 export default ProductAPI;

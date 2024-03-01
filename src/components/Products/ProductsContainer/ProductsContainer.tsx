@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
     StyledWrap,
     StyledBodyContainer,
@@ -9,16 +10,21 @@ import {getProducts} from '../feature/actionCreators';
 import Product from '../Product/Product';
 import FilterForm from '../../FilterForm/FilterForm';
 import {PaginationFields} from '../../../models/pagination.model';
+import {StyledTitle} from "../Product/ProductStyled";
 
 const ProductsContainer = () => {
     const dispatch = useAppDispatch();
     const products = useAppState(selectProducts);
     const pagination = useAppState(selectProductsPagination);
     const [page, setPage] = useState(1);
+    const hasFetchedProducts = useRef(false);
 
     useEffect(() => {
-        dispatch(getProducts({per_page: pagination?.per_page}));
-    }, [dispatch, pagination.per_page]);
+        if (!hasFetchedProducts.current && pagination) {
+            dispatch(getProducts({ per_page: pagination?.per_page }));
+            hasFetchedProducts.current = true;
+        }
+    }, [dispatch, pagination?.per_page]);
 
     const handleShowMore = () => {
         if (pagination && pagination.last_page >= page + 1) {
@@ -29,6 +35,9 @@ const ProductsContainer = () => {
 
     return (
         <StyledWrap>
+            <Link to={`/`}>
+                <StyledTitle>Login</StyledTitle>
+            </Link>
             <FilterForm/>
             <StyledBodyContainer>
                 {products && (

@@ -3,6 +3,7 @@ import {User} from "../components/Auth/feature/models";
 
 export enum AuthEndpoints {
   LOGIN = '/api/auth/login',
+  REFRESH = '/api/auth/refresh',
 }
 
 export interface IAuthorizedRequestDTO {

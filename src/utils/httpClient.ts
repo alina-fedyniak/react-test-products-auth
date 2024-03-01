@@ -7,6 +7,7 @@ import {
     API_URL, AUTHORIZATION_ACCESS_TOKEN,
 } from '../constants/common';
 import {appCookiesStorage} from "./index";
+import {AuthEndpoints} from "../models/auth.model";
 
 const defaultConfigs: AxiosRequestConfig = {
   baseURL: API_URL,
@@ -47,14 +48,19 @@ defaultClient.interceptors.response.use(
             try {
                 const accessToken = appCookiesStorage.getItem(AUTHORIZATION_ACCESS_TOKEN);
                 if (!accessToken) return;
-                const response = await axios.post('/api/auth/refresh', undefined, {headers:  {'Authorization': 'bearer ' + accessToken}});
+                const response = await axios.post(AuthEndpoints.REFRESH, undefined, {headers:  {'Authorization': 'bearer ' + accessToken}});
                 const { access_token } = response.data;
 
                 appCookiesStorage.setItem(AUTHORIZATION_ACCESS_TOKEN, access_token);
 
                 originalRequest.headers.Authorization = `Bearer ${access_token}`;
-                return axios(originalRequest);
-            } catch (error) {
+                return await axios(originalRequest);
+            } catch (error: any) {
+                if (error.response && error.response.status === 500) {
+                    alert('Internal server error. Please try again later');
+                } else {
+                    console.error('Error:', error);
+                }
             }
         }
 

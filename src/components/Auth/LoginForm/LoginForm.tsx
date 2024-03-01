@@ -2,7 +2,6 @@ import React, {useCallback} from 'react';
 import { Formik, FormikHelpers} from 'formik';
 import { StyledWrap } from './LoginFormStyled';
 import {useAppDispatch} from '../../../store/hooks';
-import {logIn} from '../feature/authSlice';
 import { useNavigate } from 'react-router-dom';
 import {loginUser} from "../feature/actionCreators";
 import {appCookiesStorage} from "../../../utils";
